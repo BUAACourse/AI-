@@ -195,7 +195,7 @@ def iDot_Graph_Construction(node_features):
 
 
 class MPNN_mk(nn.Cell):
-    def __init__(self, input_dimension, outpuut_dinmension, k):A_
+    def __init__(self, input_dimension, outpuut_dinmension, k):
         ### In GCN, k means the size of receptive field. Different receptive fields can be concatnated or summed
         ### k=1 means the traditional GCN
         super(MPNN_mk, self).__init__()
