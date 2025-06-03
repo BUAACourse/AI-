@@ -2,21 +2,22 @@
 
 ## 1.1 背景介绍
 
-推荐系统中的冷启动问题是指在系统刚开始运行或者新物品或新用户加入时，由于缺乏足够的用户-物品交互数据，导致无法进行有效的个性化推荐。这是一个普遍存在的问题，因为推荐系统需要足够的数据才能准确地预测用户偏好并提供有用的建议。
+多变量时间序列（MTS）数据在众多实际应用领域中具有重要价值，如预测性维护、医疗健康等。由于其固有的时序性和多源特性（即来自多个传感器的数据），MTS数据展现出显著的空间-时间（ST）依赖性。这种依赖性不仅包括不同时间戳之间的时序相关性，还包括同一时间戳内不同传感器之间的空间相关性。为了有效利用这些信息，图神经网络（GNNs）方法被广泛应用。然而，现有方法通常分别捕捉空间依赖性和时间依赖性，而忽略了不同传感器在不同时间戳之间的相关性（DEDT）。这种忽略限制了现有GNNs在全面建模ST依赖性方面的能力，从而影响了它们在MTS数据上学习有效表示的性能。
 
-解决冷启动问题的方法主要包括利用辅助信息来提高推荐系统的性能，例如基于内容的推荐系统和跨领域推荐系统。此外，还有一些方法使用元学习或元优化来预测用户偏好。
+传统方法主要关注捕捉时序相关性，通常采用时间编码器（如CNNs、LSTM和Transformer）来处理MTS数据。这些方法虽然在一定程度上取得了成功，但由于忽略了空间依赖性，其性能受到限制。近年来，GNNs因其能够有效捕捉空间依赖性而成为研究热点。GNNs通常与时间编码器结合使用，分别捕捉空间依赖性和时间依赖性。然而，现有方法在图构建和图卷积过程中存在局限性，无法显式考虑DEDT之间的相关性，从而限制了它们在全面建模ST依赖性方面的能力。
+
 
 ## 1.2 论文方法
 
-《MAMO: Memory-Augmented Meta-Optimization for Cold-start Recommendation》
+《Fully-Connected Spatial-Temporal Graph for Multivariate Time Series Data》
 
-这篇论文提出了一种名为Memory-Augmented Meta-Optimization (MAMO)的方法，用于解决推荐系统中的冷启动问题。该方法使用元优化来预测用户偏好，即使是对于新用户或新物品也能够进行有效的推荐。
+这篇论文提出了提出了一种新颖的方法，称为全连接空间-时间图神经网络（FC-STGNN）。该方法通过全连接图构建和移动池化GNN层，显式建模传感器之间的DEDT相关性，从而全面捕捉MTS数据中的ST依赖性。FC-STGNN的设计旨在提高MTS数据的表示学习能力，进而提升其在各种下游任务中的性能。
 
-本文提出的方法（MAMO）具有以下优势：
+本文提出的方法（FC-STGNN）具有以下优势：
 
-- MAMO使用元学习和元优化来预测用户偏好，可以在只有少量交互数据的情况下进行个性化推荐，从而有效地解决了冷启动问题；
-- MAMO使用记忆增强机制来捕捉用户的历史偏好，并将其用于初始化本地参数，从而提高了模型的泛化能力和鲁棒性；
-- MAMO在两个广泛使用的数据集上进行了大量实验，并展示了相对于现有技术的优越性能。实验结果表明，MAMO可以显著提高推荐系统的准确性和效率； 
+- 通过显式建模传感器之间的相关性，并引入衰减矩阵，充分考虑了时间距离对传感器依赖关系的影响，使模型能够更好地捕捉全局的时间依赖特性。
+- 通过移动窗口的图卷积操作，模型能够捕捉局部的时空依赖性，从而有效提取局部的动态特征。
+- 通过时间池化和多层并行的特征拼接，模型能够聚合多尺度的时空信息，增强了对复杂传感器数据的建模能力。
 
 ## 1.3 数据集介绍
 
@@ -24,7 +25,7 @@
 
 ## 1.4 pipeline
 
-本作业将基于论文[官方代码仓库](https://github.com/dongmanqing/Code-for-MAMO)实现，将pytorch版本的网络模型转换成mindspore版本的模型。
+本作业将基于论文[官方代码仓库](https://github.com/Frank-Wang-oss/FCSTGNN)实现，将pytorch版本的网络模型转换成mindspore版本的模型。
 
 
 
@@ -66,64 +67,46 @@ ISRUC-S3数据集：数据下载地址：https://sleeptight.isr.uc.pt/
 
 
 
-该项目的文件目录树如下：TODO
+该项目的文件目录树如下：
+
 
 ```
-D:.
-│  configs.py
-│  LICENSE
-│  mamoRec.py
-│  models.py
-│  prepareDataset.py
-│  README.md
-│  tree.txt
-│  utils.py
-│  
-├─.idea
-│  │  .gitignore
-│  │  Code-for-MAMO.iml
-│  │  misc.xml
-│  │  modules.xml
-│  │  vcs.xml
-│  │  workspace.xml
-│  │  
-│  └─inspectionProfiles
-│          profiles_settings.xml
-│          Project_Default.xml
-│          
-├─data_processed
-│  └─movielens
-│      │  item_dict.p
-│      │  item_state_ids.p
-│      │  ratings_sorted.p
-│      │  user_dict.p
-│      │  user_state_ids.p
-│      │  
-│      └─raw
-├─data_raw
-│  ├─book_crossing
-│  │      Download the dataset into this folder.txt
-│  │      
-│  └─ml-1m
-│          List_director.txt
-│          List_genre.txt
-│          movies.dat
-│          movies_extrainfos.dat
-│          ratings.dat
-│          README
-│          users.dat
-│          
-├─modules
-│  │  info_embedding.py
-│  │  input_loading.py
-│  │  memories.py
-│  │  rec_model.py
-│  
-│          
-├─prepare_data
-│  │  prepareList.py
-│  │  prepareMovielens.py
+code
+├─ 📁Data_preprocessing
+│  ├─ 📁HAR
+│  │  ├─ 📁test
+│  │  └─ 📁train
+│  ├─ 📁ISRUC_S3
+│  │  ├─ 📁ExtractedChannels
+│  │  └─ 📁RawData
+│  ├─ 📄bash.sh
+│  ├─ 📄preprocess_ISRUC.py
+│  └─ 📄preprocess_UCI_HAR.py
+├─ 📁HAR
+│  ├─ 📄test.ckpt
+│  ├─ 📄train.ckpt
+│  └─ 📄val.ckpt
+├─ 📁ISRUC
+│  ├─ 📄ISRUC_S1.npz
+│  ├─ 📄ISRUC_S10.npz
+│  ├─ 📄ISRUC_S2.npz
+│  ├─ 📄ISRUC_S3.npz
+│  ├─ 📄ISRUC_S4.npz
+│  ├─ 📄ISRUC_S5.npz
+│  ├─ 📄ISRUC_S6.npz
+│  ├─ 📄ISRUC_S7.npz
+│  ├─ 📄ISRUC_S8.npz
+│  └─ 📄ISRUC_S9.npz
+├─ 📄args.py
+├─ 📄data_loader_HAR.py
+├─ 📄data_loader_ISRUC.py
+├─ 📄main_HAR.py
+├─ 📄main_ISRUC.py
+├─ 📄Model.py
+├─ 📄Model_Base.py
+└─ 📄README.md
 ```
+
 
 ## 2.2 运行代码
 下载与预处理步骤：
@@ -158,7 +141,7 @@ Process finished with exit code 0
 
 # 3. mindspore实现版本
 
-代码仓库：TODO
+代码仓库：https://github.com/BUAACourse/AI-/tree/main
 
 ## 3.1 mindspore框架介绍
 
@@ -370,62 +353,29 @@ class FC_STGNN_HAR(nn.Cell):
 
 下面是将pytorch模型转为mindspore模型后的训练测试结果：
 
+
 ```
-CPU
-Model parameters:
-Param name: input_user_loading.embedding_gender.embedding_table, shape: (2, 100)
-Param name: input_user_loading.embedding_age.embedding_table, shape: (7, 100)
-Param name: input_user_loading.embedding_occupation.embedding_table, shape: (21, 100)
-Param name: input_item_loading.emb_rate.embedding_table, shape: (6, 100)
-Param name: input_item_loading.emb_genre.weight, shape: (100, 25)
-Param name: input_item_loading.emb_genre.bias, shape: (100,)
-Param name: input_item_loading.emb_director.weight, shape: (100, 2186)
-Param name: input_item_loading.emb_director.bias, shape: (100,)
-Param name: input_item_loading.emb_year.embedding_table, shape: (81, 100)
-Param name: user_embedding.fc.0.weight, shape: (150, 300)
-Param name: user_embedding.fc.0.bias, shape: (150,)
-Param name: user_embedding.final_layer.0.weight, shape: (100, 150)
-Param name: user_embedding.final_layer.0.bias, shape: (100,)
-Param name: item_embedding.fc.0.weight, shape: (200, 400)
-Param name: item_embedding.fc.0.bias, shape: (200,)
-Param name: item_embedding.final_layer.0.weight, shape: (100, 200)
-Param name: item_embedding.final_layer.0.bias, shape: (100,)
-Param name: rec_model.mem_layer.weight, shape: (200, 200)
-Param name: rec_model.mem_layer.bias, shape: (200,)
-Param name: rec_model.fc.0.weight, shape: (100, 200)
-Param name: rec_model.fc.0.bias, shape: (100,)
-Param name: rec_model.final_layer.0.weight, shape: (5, 100)
-Param name: rec_model.final_layer.0.bias, shape: (5,)
-4775
-1462
-4858
-...
-...
-1991
-5714
-2774
 start train
 train finished
-0 711
-1 5728
-2 1277
-3 4060
+...
+In the 0th epoch, accuracy is 70.60%
+In the 1th epoch, accuracy is 71.55%
 ...
 ...
-1204 2362
-1205 5416
-1206 5934
-test finished
-
+In the 37th epoch, accuracy is 93.96%
+In the 38th epoch, accuracy is 94.10%
+...
+...
+Final accuracy: 95.20%
+Final MF1 score: 94.94%
+...
+...
 Process finished with exit code 0
-
 ```
 
 
 
-华为云服务器运行截图如下：
 
-![](https://raw.githubusercontent.com/XiShuFan/picRepo/main/img/1685714068320.jpg)
 
 
 
